@@ -1,0 +1,54 @@
+package core;
+import models.ShoeItem;
+import models.SaleRecord;
+
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.Scanner;
+
+import static util.InputHelper.*;
+
+public class SalesManager {
+
+    private static final int MAX_PRICE = 10000;
+
+    public static void processSale(ArrayList<ShoeItem> inventory, ArrayList<SaleRecord> sales, Scanner input) {
+        if (inventory.isEmpty()) {
+            System.out.println("Inventory is empty - nothing to sell.");
+            return;
+        }
+
+        InventoryManager.showInventory(inventory);
+
+        int id = getValidInt(input, "Enter ID of shoe sold: ", 1, Integer.MAX_VALUE);
+        Optional<ShoeItem> itemOpt = inventory.stream().filter(item -> item.id == id).findFirst();
+
+        if (itemOpt.isEmpty()) {
+            System.out.println("Item not found.");
+            return;
+        }
+
+        ShoeItem item = itemOpt.get();
+        String buyer = getValidInput(input, "Enter buyer's name: ", "Buyer name cannot be empty.", s -> !s.isEmpty());
+        int qty = getValidInt(input, "Enter quantity sold: ", 1, item.quantity);
+        double price = getValidDouble(input, "Enter sale price per item: ", 0.01, MAX_PRICE);
+
+        item.quantity -= qty;
+        sales.add(new SaleRecord(item.name, buyer, qty, price));
+        System.out.println("Sale recorded.");
+
+        if (item.quantity == 0) {
+            inventory.remove(item);
+            System.out.println("Item removed from inventory.");
+        }
+    }
+
+    public static void showSalesHistory(ArrayList<SaleRecord> sales) {
+        if (sales.isEmpty()) {
+            System.out.println("No sales yet.");
+            return;
+        }
+        System.out.println("--- Sales History ---");
+        sales.forEach(System.out::println);
+    }
+}
