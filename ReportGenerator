@@ -1,0 +1,63 @@
+package util;
+import models.SaleRecord;
+import models.ShoeItem;
+
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
+public class ReportGenerator {
+
+    public static void generateReports(ArrayList<ShoeItem> inventory, ArrayList<SaleRecord> sales, Scanner input) {
+        System.out.println("\n--- Reports ---");
+        System.out.println("1. Inventory Summary");
+        System.out.println("2. Sales Summary");
+        System.out.println("3. Low Stock Alert");
+        System.out.println("4. Best Selling Items");
+        System.out.print("Choose report: ");
+
+        String option = input.nextLine();
+        switch (option) {
+            case "1" -> generateInventoryReport(inventory);
+            case "2" -> generateSalesReport(sales);
+            case "3" -> generateLowStockReport(inventory);
+            case "4" -> generateBestSellersReport(sales);
+            default -> System.out.println("Invalid report option.");
+        }
+    }
+
+    public static void generateInventoryReport(ArrayList<ShoeItem> inventory) {
+        System.out.println("Inventory Summary");
+        System.out.println("Total items: " + inventory.size());
+        int totalQty = inventory.stream().mapToInt(item -> item.quantity).sum();
+        double value = inventory.stream().mapToDouble(item -> item.quantity * item.price).sum();
+        System.out.println("Total quantity: " + totalQty);
+        System.out.printf("Total value: $%.2f%n", value);
+    }
+
+    public static void generateSalesReport(ArrayList<SaleRecord> sales) {
+        System.out.println("Sales Summary");
+        System.out.println("Total transactions: " + sales.size());
+        int totalSold = sales.stream().mapToInt(s -> s.quantity).sum();
+        double revenue = sales.stream().mapToDouble(s -> s.quantity * s.salePrice).sum();
+        System.out.println("Total items sold: " + totalSold);
+        System.out.printf("Total revenue: $%.2f%n", revenue);
+    }
+
+    public static void generateLowStockReport(ArrayList<ShoeItem> inventory) {
+        System.out.println("Low Stock Items (<5):");
+        inventory.stream()
+                .filter(i -> i.quantity < 5)
+                .forEach(i -> System.out.println(i.name + " (Qty: " + i.quantity + ")"));
+    }
+
+    public static void generateBestSellersReport(ArrayList<SaleRecord> sales) {
+        System.out.println("Top 5 Best Sellers:");
+        sales.stream()
+                .collect(Collectors.groupingBy(s -> s.name, Collectors.summingInt(s -> s.quantity)))
+                .entrySet().stream()
+                .sorted((e1, e2) -> e2.getValue() - e1.getValue())
+                .limit(5)
+                .forEach(e -> System.out.println(e.getKey() + ": " + e.getValue() + " sold"));
+    }
+}
