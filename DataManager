@@ -1,0 +1,45 @@
+package data;
+import models.ShoeItem;
+import models.SaleRecord;
+
+import java.io.*;
+import java.util.ArrayList;
+
+public class DataManager {
+    private static final String DATA_FILE = "store_data.ser";
+
+    public static ArrayList<ShoeItem> loadInventory() {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(DATA_FILE))) {
+            return (ArrayList<ShoeItem>) in.readObject();
+        } catch (FileNotFoundException e) {
+            System.out.println("No inventory data found. Starting fresh.");
+            return new ArrayList<>();
+        } catch (Exception e) {
+            System.out.println("Error loading inventory: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    public static ArrayList<SaleRecord> loadSales() {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(DATA_FILE))) {
+            in.readObject(); // Skip inventory
+            return (ArrayList<SaleRecord>) in.readObject();
+        } catch (FileNotFoundException e) {
+            System.out.println("No sales data found. Starting fresh.");
+            return new ArrayList<>();
+        } catch (Exception e) {
+            System.out.println("Error loading sales: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    public static void saveData(ArrayList<ShoeItem> inventory, ArrayList<SaleRecord> sales) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(DATA_FILE))) {
+            out.writeObject(inventory);
+            out.writeObject(sales);
+            System.out.println("Data saved.");
+        } catch (IOException e) {
+            System.out.println("Save failed: " + e.getMessage());
+        }
+    }
+}
