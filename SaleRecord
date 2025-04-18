@@ -1,0 +1,28 @@
+package models;
+
+import java.time.format.DateTimeFormatter;
+//The class extends Record, indicating it inherits from a parent class (likely containing common fields like id, name, quantity, and dateAdded).
+
+//It's part of the models package, suggesting it's part of the data model layer.
+
+public class SaleRecord extends Record {
+    public final String buyerName;//buyerName (final String): Stores the name of the buyer, immutable after construction.
+    public final double salePrice;//salePrice (final double): Stores the unit price of the sale, immutable after construction.
+    //DATE_TIME_FORMAT (static DateTimeFormatter): A shared formatter for consistent date/time display across all instances.
+    private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
+    //Constructor, Takes four parameters: item name, buyer name, quantity, and sale price.
+    public SaleRecord(String name, String buyerName, int quantity, double salePrice) {
+        super(name, quantity);//Delegates the name and quantity to the parent class constructor via super()
+        //Initializes its own final fields.
+        this.buyerName = buyerName;
+        this.salePrice = salePrice;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("ID: %d | %s - Buyer: %s - Qty: %d @ $%.2f - Total: $%.2f - Date: %s",
+                id, name, buyerName, quantity, salePrice, (quantity * salePrice),
+                dateAdded.format(DATE_TIME_FORMAT));
+    }
+}
+
