@@ -1,0 +1,78 @@
+package core;
+import models.ShoeItem;
+
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
+import static util.InputHelper.*;
+
+public class InventoryManager {
+
+    private static final int MAX_PRICE = 10000;
+    private static final int MAX_QUANTITY = 1000;
+
+    public static void showInventory(ArrayList<ShoeItem> inventory) {
+        if (inventory.isEmpty()) {
+            System.out.println("Inventory is empty.");
+            return;
+        }
+        System.out.println("--- Current Inventory ---");
+        inventory.forEach(System.out::println);
+    }
+
+    public static void addInventoryItem(ArrayList<ShoeItem> inventory, Scanner input) {
+        System.out.println("--- Add New Shoe ---");
+        String name = getValidInput(input, "Enter shoe name: ", "Name cannot be empty.", s -> !s.isEmpty());
+        double price = getValidDouble(input, "Enter price: ", 0.01, MAX_PRICE);
+        int quantity = getValidInt(input, "Enter quantity: ", 1, MAX_QUANTITY);
+        String seller = getValidInput(input, "Enter seller: ", "Seller cannot be empty.", s -> !s.isEmpty());
+        String category = getValidInput(input, "Enter category: ", "Category cannot be empty.", s -> !s.isEmpty());
+        String size = getValidInput(input, "Enter size: ", "Size cannot be empty.", s -> !s.isEmpty());
+
+        ShoeItem item = new ShoeItem(name, price, quantity, seller, category, size);
+        inventory.add(item);
+        System.out.println("Shoe added: " + item);
+    }
+
+    public static void deleteInventoryItem(ArrayList<ShoeItem> inventory, Scanner input) {
+        if (inventory.isEmpty()) {
+            System.out.println("Inventory is empty.");
+            return;
+        }
+        int id = getValidInt(input, "Enter shoe ID to delete: ", 1, Integer.MAX_VALUE);
+        Optional<ShoeItem> match = inventory.stream().filter(i -> i.id == id).findFirst();
+        if (match.isPresent()) {
+            ShoeItem item = match.get();
+            System.out.println("Found: " + item);
+            String confirm = getValidInput(input, "Confirm deletion (yes/no): ", "Enter yes or no.",
+                    s -> s.equalsIgnoreCase("yes") || s.equalsIgnoreCase("no"));
+            if (confirm.equalsIgnoreCase("yes")) {
+                inventory.remove(item);
+                System.out.println("Item deleted.");
+            } else {
+                System.out.println("Operation cancelled.");
+            }
+        } else {
+            System.out.println("Item not found.");
+        }
+    }
+
+    public static void searchInventory(ArrayList<ShoeItem> inventory, Scanner input) {
+        if (inventory.isEmpty()) {
+            System.out.println("Inventory is empty.");
+            return;
+        }
+        String term = getValidInput(input, "Enter search term: ", "Cannot be empty.", s -> !s.isEmpty());
+        var results = inventory.stream()
+                .filter(item -> item.name.toLowerCase().contains(term.toLowerCase()))
+                .collect(Collectors.toList());
+        if (results.isEmpty()) {
+            System.out.println("No items matched.");
+        } else {
+            results.forEach(System.out::println);
+        }
+    }
+}
+
