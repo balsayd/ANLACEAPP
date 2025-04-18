@@ -1,0 +1,27 @@
+package models;
+import java.time.format.DateTimeFormatter;
+
+public class ShoeItem extends Record {
+    public double price;
+    public String description;
+    public String seller;
+    public String category;
+    public String size;
+
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+
+    public ShoeItem(String name, double price, int quantity, String seller, String category, String size) {
+        super(name, quantity);
+        this.price = price;
+        this.seller = seller;
+        this.category = category;
+        this.size = size;
+        this.description = "";
+    }
+
+    @Override
+    public String toString() {
+        return String.format("ID: %d | %s - Size: %s - $%.2f - Qty: %d - Category: %s - Seller: %s - Added: %s",
+                id, name, size, price, quantity, category, seller, dateAdded.format(DATE_FORMAT));
+    }
+}
