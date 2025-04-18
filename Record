@@ -1,0 +1,18 @@
+package models;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+public abstract class Record implements Serializable {
+    private static int nextId = 1; // Static counter for unique IDs
+    public final int id;           // Unique identifier for the record
+    public String name;           // Name of the shoe or item
+    public int quantity;          // Quantity available or sold
+    public final LocalDateTime dateAdded; // Timestamp when the record was created
+
+    public Record(String name, int quantity) {
+        this.id = nextId++;             // Assign and increment ID
+        this.name = name;
+        this.quantity = quantity;
+        this.dateAdded = LocalDateTime.now(); // Capture creation time
+    }
+}
