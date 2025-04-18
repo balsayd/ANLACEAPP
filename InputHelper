@@ -1,0 +1,50 @@
+package util;
+import models.User;
+
+import java.util.Scanner;
+import java.util.function.Predicate;
+
+public class InputHelper {
+
+    public static User authenticateUser(Scanner input) {
+        System.out.println("=== Unlace Shoe Inventory System ===");
+        String username = getValidInput(input, "Enter your name: ", "Name cannot be empty.", s -> !s.isEmpty());
+        String email = getValidInput(input, "Enter your email: ", "Invalid email format.",
+                s -> s.matches("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$"));
+        return new User(username, email);
+    }
+
+    public static String getValidInput(Scanner input, String prompt, String errorMessage, Predicate<String> validator) {
+        while (true) {
+            System.out.print(prompt);
+            String value = input.nextLine().trim();
+            if (validator.test(value)) {
+                return value;
+            }
+            System.out.println(errorMessage);
+        }
+    }
+
+    public static int getValidInt(Scanner input, String prompt, int min, int max) {
+        while (true) {
+            System.out.print(prompt);
+            try {
+                int value = Integer.parseInt(input.nextLine());
+                if (value >= min && value <= max) return value;
+            } catch (NumberFormatException ignored) {}
+            System.out.printf("Enter a number between %d and %d.%n", min, max);
+        }
+    }
+
+    public static double getValidDouble(Scanner input, String prompt, double min, double max) {
+        while (true) {
+            System.out.print(prompt);
+            try {
+                double value = Double.parseDouble(input.nextLine());
+                if (value >= min && value <= max) return value;
+            } catch (NumberFormatException ignored) {}
+            System.out.printf("Enter a number between %.2f and %.2f.%n", min, max);
+        }
+    }
+}
+
